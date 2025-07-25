@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>سكنات ماين كرافت</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet" />
+<style>
+  * {
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #e0e6f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px 50px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px 10px;
+    max-width: 900px;
+    width: 100%;
+    background: rgba(255 255 255 / 0.05);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+    user-select: none;
+  }
+  header h1 {
+    font-size: 2.6rem;
+    margin-bottom: 8px;
+    color: #7df9ff;
+    text-shadow:
+      0 0 5px #7df9ff,
+      0 0 10px #00ffff,
+      0 0 15px #00ffff,
+      0 0 20px #0ff,
+      0 0 30px #0ff;
+  }
+  header p {
+    font-size: 1.2rem;
+    color: #a3d2ffcc;
+  }
+  .skins {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 10px;
+  }
+  .skin {
+    background: rgba(255 255 255 / 0.1);
+    border-radius: 20px;
+    padding: 15px 10px 20px;
+    text-align: center;
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.7),
+      0 0 20px #00e5ff44;
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    user-select: none;
+    transform-style: preserve-3d;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+  }
+  .skin:hover {
+    box-shadow:
+      0 8px 16px rgba(0, 0, 0, 0.9),
+      0 0 30px #00e5ffcc;
+    transform: translateY(-8px) scale(1.05);
+  }
+  .skin img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 16px;
+    image-rendering: pixelated;
+    background-color: #0a3940;
+    box-shadow:
+      inset 0 0 15px #00e5ffaa;
+    border: 3px solid #00e5ffcc;
+    transition: filter 0.3s ease, box-shadow 0.3s ease;
+  }
+  .skin:hover img {
+    filter: drop-shadow(0 0 14px #00ffffdd);
+    box-shadow:
+      inset 0 0 20px #00ffffee,
+      0 0 20px #00e5ffbb;
+  }
+  .skin a {
+    margin-top: 12px;
+    display: inline-block;
+    padding: 8px 18px;
+    background: linear-gradient(45deg, #00e5ff, #0077b6);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 30px;
+    box-shadow:
+      0 4px 15px #00e5ffbb;
+    user-select: none;
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .skin a:hover {
+    background: linear-gradient(45deg, #00c2ff, #005f87);
+    box-shadow:
+      0 6px 20px #00ffffcc;
+    transform: scale(1.05);
+  }
+  /* المودال (نافذة التفاصيل) */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: none; /* مخفية افتراضياً */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+  .modal {
+    background: rgba(255 255 255 / 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px #00e5ffcc;
+    max-width: 900px;
+    width: 90%;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    color: #e0e6f0;
+    user-select: text;
+  }
+  .modal-left, .modal-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .modal-left img {
+    max-width: 100%;
+    border-radius: 20px;
+    border: 3px solid #00e5ffcc;
+    image-rendering: pixelated;
+    background-color: #0a3940;
+    box-shadow:
+      inset 0 0 25px #00e5ffaa;
+  }
+  .modal-right {
+    justify-content: space-between;
+    padding-left: 10px;
+  }
+  .modal-right h2 {
+    margin-top: 0;
+    color: #7df9ff;
+    text-shadow:
+      0 0 5px #7df9ff,
+      0 0 10px #00ffff;
+  }
+  .modal-right p {
+    margin: 10px 0 20px;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #a3d2ffcc;
+  }
+  .modal-right .download-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .modal-right .download-buttons a {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(45deg, #00e5ff, #0077b6);
+    box-shadow: 0 4px 15px #00e5ffbb;
+    color: white;
+    text-decoration: none;
+    user-select: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .modal-right .download-buttons a:hover {
+    background: linear-gradient(45deg, #00c2ff, #005f87);
+    box-shadow: 0 6px 20px #00ffffcc;
+    transform: scale(1.05);
+  }
+  .close-btn {
+    align-self: flex-start;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00e5ff;
+    user-select: none;
+    transition: color 0.3s ease;
+    border: none;
+    background: none;
+  }
+  .close-btn:hover {
+    color: #00ffff;
+  }
+  /* تجاوب */
+  @media (max-width: 800px) {
+    .modal {
+      flex-direction: column;
+      padding: 15px;
+    }
+    .modal-right {
+      padding-left: 0;
+      width: 100%;
+    }
+    .modal-left img {
+      width: 100%;
+      height: auto;
+    }
+  }
+  @media (max-width: 480px) {
+    header h1 {
+      font-size: 1.8rem;
+    }
+    header p {
+      font-size: 1rem;
+    }
+    .skin img {
+      width: 100px;
+      height: 100px;
+    }
+    .skin {
+      padding: 12px 8px 15px;
+    }
+  }
+ 
+  style>
+.search-container {
+  position: relative;
+  width: 300px;
+  margin: 20px auto;
+  direction: rtl;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 45px 12px 15px;
+  border: 2px solid #ccc;
+  border-radius: 30px;
+  font-size: 16px;
+  transition: 0.3s;
+  font-family: 'Cairo', sans-serif;
+}
+
+.search-container input:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 0 8px #4CAF50;
+}
+
+.search-container .search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+</style>
+
+
+</head>
+<body>
+  <div class="search-container">
+  <input type="text" id="searchInput" placeholder="ابحث عن سكن...">
+  <img src="icons/search-icon.png" alt="بحث" class="search-icon">
+</div>
+
+
+
+
+<header>
+  <h1>🧥 سكنات ماين كرافت بيدروك</h1>
+  <p>اضغط تحميل للحصول على نسخة Bedrock الخاصة بالسكن</p>
+</header>
+
+  
+<section class="skins">
+
+  <div class="skin" data-name="سلايم الملون" data-image="skins/skin3.png" data-desc="سكن نابض بالألوان، مناسب لعشاق المرح والغرابة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin3.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin3.png"}
+  ]'>
+    <img src="skins/skin3.png" alt="Skin 3" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="السلايم المدمج" data-image="skins/skin4.png" data-desc="تصميم يجمع بين العصرية والغرابة، لمحبي السكنات الفريدة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin4.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin4.png"}
+  ]'>
+    <img src="skins/skin4.png" alt="skin 4" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="لا يبالي" data-image="skins/skin5.png" data-desc="سكن يعكس شخصية باردة ولا تهتم بأي شيء." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin5.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin5.png"}
+  ]'>
+    <img src="skins/skin5.png" alt="Skin 5" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الولد الزومبي" data-image="skins/skin6.png" data-desc="سكن مرعب بشخصية زومبي صغير مناسب لعشاق التحدي." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin6.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin6.png"}
+  ]'>
+    <img src="skins/skin6.png" alt="Skin 6" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الشاب الطيف" data-image="skins/skin7.png" data-desc="سكن مميز يعكس الهدوء والمظهر الأنيق." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin7.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin7.png"}
+  ]'>
+    <img src="skins/skin7.png" alt="Skin 7" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="المحب" data-image="skins/skin8.png" data-desc="سكن رومانسي يعبر عن شخصية محبة ولطيفة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin8.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin8.png"}
+  ]'>
+    <img src="skins/skin8.png" alt="Skin 8" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="البنت الجميله" data-image="skins/skin9.png" data-desc="سكن أنيق يعكس الجمال والرقة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin9.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin9.png"}
+  ]'>
+    <img src="skins/skin9.png" alt="Skin 9" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الرعب" data-image="skins/skin10.png" data-desc="سكن مظلم ومرعب لمن يعشق أجواء الرعب والغموض." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin10.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin10.png"}
+  ]'>
+    <img src="skins/skin10.png" alt="Skin 10" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الجنرال" data-image="skins/skin11.png" data-desc="سكن يعبر عن القوة والانضباط، بشخصية القائد العسكري." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin11.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin11.png"}
+  ]'>
+    <img src="skins/skin11.png" alt="Skin 11" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الوحش الديناصور" data-image="skins/skin12.png" data-desc="سكن شرس مستوحى من الديناصورات القوية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin12.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin12.png"}
+  ]'>
+    <img src="skins/skin12.png" alt="Skin 12" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الاسود" data-image="skins/skin13.png" data-desc="سكن أنيق وقوي، يعكس الغموض والهيبة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin13.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin13.png"}
+  ]'>
+    <img src="skins/skin13.png" alt="Skin 13" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="النينجا" data-image="skins/skin14.png" data-desc="سكن سريع وهادئ، يجسد روح النينجا المحترفة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin14.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin14.png"}
+  ]'>
+    <img src="skins/skin14.png" alt="Skin 14" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="سكن الكريبر التلفاز" data-image="skins/skin15.png" data-desc="سكن فريد مستوحى من شخصية الكريبر الغامضة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin15.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin15.png"}
+  ]'>
+    <img src="skins/skin15.png" alt="Skin 15" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الولد الاخضر" data-image="skins/skin16.png" data-desc="سكن يتميز بلونه الأخضر المميز، يعكس الحيوية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin16.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin16.png"}
+  ]'>
+    <img src="skins/skin16.png" alt="Skin 16" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الوحش الاخضر " data-image="skins/skin17.png" data-desc="سكن قوي وشرس مستوحى من الوحوش الخضراء الأسطورية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin17.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin17.png"}
+  ]'>
+    <img src="skins/skin17.png" alt="Skin 17" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="روبلوكس السعيد" data-image="skins/skin18.png" data-desc="سكن مبهج يعكس السعادة والطاقة الإيجابية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin18.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin18.png"}
+  ]'>
+    <img src="skins/skin18.png" alt="Skin 18" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الاسود الغامض" data-image="skins/skin19.png" data-desc="سكن غامض يجذب الأنظار ويثير الفضول." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin19.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin19.png"}
+  ]'>
+    <img src="skins/skin19.png" alt="Skin 19" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="السنجاب " data-image="skins/skin20.png" data-desc="سكن ظريف يعكس خفة الحركة والمرح." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin20.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin20.png"}
+  ]'>
+    <img src="skins/skin20.png" alt="Skin 20" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الدب " data-image="skins/skin21.png" data-desc="سكن قوي وثقيل يعبر عن القوة والدفء." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin21.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin21.png"}
+  ]'>
+    <img src="skins/skin21.png" alt="Skin 21" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="البط الازرق " data-image="skins/skin22.png" data-desc="سكن فريد يجمع بين الهدوء والبرودة كالثلج." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin22.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin22.png"}
+  ]'>
+    <img src="skins/skin22.png" alt="Skin 22" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الرجل المغامر" data-image="skins/skin23.png" data-desc="سكن مثالي لمحبي المغامرة والتحدي." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin23.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin23.png"}
+  ]'>
+    <img src="skins/skin23.png" alt="Skin 23" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="سانتا القاتل" data-image="skins/skin24.png" data-desc="سكن غريب يمزج بين شخصية سانتا المرحة والقتالية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin24.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin24.png"}
+  ]'>
+    <img src="skins/skin24.png" alt="Skin 24" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="التشويش" data-image="skins/skin25.png" data-desc="سكن غامض يعكس التداخل والفوضى." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin25.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin25.png"}
+  ]'>
+    <img src="skins/skin25.png" alt="Skin 25" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="البنت الورديه" data-image="skins/skin26.png" data-desc="سكن رقيق بألوان وردية يعكس الأنوثة والنعومة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin26.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin26.png"}
+  ]'>
+    <img src="skins/skin26.png" alt="Skin 26" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="السعودي" data-image="skins/skin27.png" data-desc="سكن يعكس التراث والهوية السعودية بفخر." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin27.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin27.png"}
+  ]'>
+    <img src="skins/skin27.png" alt="Skin 27" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="بنت المحبة للدبب" data-image="skins/skin28.png" data-desc="سكن لطيف يعبر عن حب الدببة والحنان." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin28.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin28.png"}
+  ]'>
+    <img src="skins/skin28.png" alt="Skin 28" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="ملك الضلام " data-image="skins/skin29.png" data-desc="سكن قوي غامض، يحكم الظلام بلا منازع." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin29.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin29.png"}
+  ]'>
+    <img src="skins/skin29.png" alt="Skin 29" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="بنت السوداء" data-image="skins/skin30.png" data-desc="سكن أنيق بقوة الأسود، يعكس الغموض والجمال." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin30.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin30.png"}
+  ]'>
+    <img src="skins/skin30.png" alt="Skin 30" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الشاب " data-image="skins/skin31.png" data-desc="سكن شبابي عصري يعبر عن الحيوية والطموح." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin31.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin31.png"}
+  ]'>
+    <img src="skins/skin31.png" alt="Skin 31" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الطفل الغبي" data-image="skins/skin32.png" data-desc="سكن طريف يناسب شخصية مرحة وبريئة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin32.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin32.png"}
+  ]'>
+    <img src="skins/skin32.png" alt="Skin 32" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الشرير" data-image="skins/skin33.png" data-desc="سكن يعكس الجانب المظلم والعدائي." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin33.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin33.png"}
+  ]'>
+    <img src="skins/skin33.png" alt="Skin 33" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="البنت " data-image="skins/skin34.png" data-desc="سكن ناعم وأنيق يناسب الفتيات الرقيقات." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin34.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin34.png"}
+  ]'>
+    <img src="skins/skin34.png" alt="Skin 34" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الولد" data-image="skins/skin35.png" data-desc="سكن بسيط يعبر عن شخصية الولد العادية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin35.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin35.png"}
+  ]'>
+    <img src="skins/skin35.png" alt="Skin 35" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الولد المضحك" data-image="skins/skin36.png" data-desc="سكن مرح يعكس روح الدعابة والضحك." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin36.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin36.png"}
+  ]'>
+    <img src="skins/skin36.png" alt="Skin 36" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الولد الجميل" data-image="skins/skin37.png" data-desc="سكن جذاب يعبر عن الجمال والثقة بالنفس." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin37.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin37.png"}
+  ]'>
+    <img src="skins/skin37.png" alt="Skin 37" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الولد المسعور" data-image="skins/skin38.png" data-desc="سكن يعكس الغضب والقوة الجامحة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin38.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin38.png"}
+  ]'>
+    <img src="skins/skin38.png" alt="Skin 38" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الطفل الشرير" data-image="skins/skin39.png" data-desc="سكن ظريف مع لمسة من الشر." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin39.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin39.png"}
+  ]'>
+    <img src="skins/skin39.png" alt="Skin 39" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="القرد المضحك" data-image="skins/skin40.png" data-desc="سكن طريف يعكس شخصية مرحة وذكية." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin40.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin40.png"}
+  ]'>
+    <img src="skins/skin40.png" alt="Skin 40" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الوحش القوي" data-image="skins/skin41.png" data-desc="سكن يعكس القوة والصلابة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin41.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin41.png"}
+  ]'>
+    <img src="skins/skin41.png" alt="Skin 41" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الساحر" data-image="skins/skin42.png" data-desc="سكن غامض بقوى سحرية جذابة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin42.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin42.png"}
+  ]'>
+    <img src="skins/skin42.png" alt="Skin 42" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الهيكل العظمي" data-image="skins/skin43.png" data-desc="سكن مخيف يعبر عن الموت والظلام." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin43.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin43.png"}
+  ]'>
+    <img src="skins/skin43.png" alt="Skin 43" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="النينجا الأسود" data-image="skins/skin44.png" data-desc="سكن أنيق وسريع، مثالي لمحبي التسلل والسرعة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin44.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin44.png"}
+  ]'>
+    <img src="skins/skin44.png" alt="Skin 44" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الرجل الحديدي" data-image="skins/skin45.png" data-desc="سكن مستوحى من القوة التكنولوجية والصلابة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin45.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin45.png"}
+  ]'>
+    <img src="skins/skin45.png" alt="Skin 45" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="المحقق" data-image="skins/skin46.png" data-desc="سكن ذكي يناسب محبي التحقيق وحل الألغاز." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin46.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin46.png"}
+  ]'>
+    <img src="skins/skin46.png" alt="Skin 46" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="القرصان" data-image="skins/skin47.png" data-desc="سكن مغامر يجسد روح القراصنة والبحار." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin47.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin47.png"}
+  ]'>
+    <img src="skins/skin47.png" alt="Skin 47" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الملك" data-image="skins/skin48.png" data-desc="سكن ملكي يعكس الفخامة والهيبة." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin48.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin48.png"}
+  ]'>
+    <img src="skins/skin48.png" alt="Skin 48" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الوحش المتوحش" data-image="skins/skin49.png" data-desc="سكن شرس ومخيف، يجسد الوحش المتوحش." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin49.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin49.png"}
+  ]'>
+    <img src="skins/skin49.png" alt="Skin 49" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+  <div class="skin" data-name="الفارس الأسود" data-image="skins/skin50.png" data-desc="سكن فارس قوي وغامض يرتدي درعاً أسود." data-downloads='[
+    {"label":"تحميل نسخة Bedrock","url":"skins/picskin50.png"},
+    {"label":"تحميل صورة بجودة عالية ","url":"skins/skin50.png"}
+  ]'>
+    <img src="skins/skin50.png" alt="Skin 50" />
+    <a href="#" class="open-details">تحميل</a>
+  </div>
+
+</section>
+
+
+
+
+<!-- مودال التفاصيل -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="close-btn" id="closeModal">&times;</button>
+    <div class="modal-left">
+      <img src="" alt="صورة السكن" id="modalImage" />
+    </div>
+    <div class="modal-right">
+      <h2 id="modalTitle">عنوان السكن</h2>
+      <p id="modalDesc">تفاصيل السكن هنا</p>
+      <div class="download-buttons" id="modalDownloads">
+        <!-- أزرار التحميل هنا ديناميكياً -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // جلب كل أزرار التحميل
+  const openButtons = document.querySelectorAll('.open-details');
+  const modal = document.getElementById('modal');
+  const modalImage = document.getElementById('modalImage');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalDownloads = document.getElementById('modalDownloads');
+  const closeModal = document.getElementById('closeModal');
+
+  openButtons.forEach(button => {
+    button.addEventListener('click', e => {
+      e.preventDefault();
+      const skinDiv = e.target.closest('.skin');
+
+      // جلب البيانات من خصائص data
+      const name = skinDiv.dataset.name;
+      const image = skinDiv.dataset.image;
+      const desc = skinDiv.dataset.desc;
+      const downloads = JSON.parse(skinDiv.dataset.downloads);
+
+      // تعبئة المودال
+      modalTitle.textContent = name;
+      modalImage.src = image;
+      modalImage.alt = name;
+      modalDesc.textContent = desc;
+
+      // تنظيف أزرار التحميل السابقة
+      modalDownloads.innerHTML = '';
+
+      // إنشاء أزرار تحميل جديدة
+      downloads.forEach(d => {
+        const a = document.createElement('a');
+        a.href = d.url;
+        a.target = "_blank";
+        a.download = "";
+        a.textContent = d.label;
+        modalDownloads.appendChild(a);
+      });
+
+      // إظهار المودال
+      modal.classList.add('active');
+    });
+  });
+
+  // إغلاق المودال
+  closeModal.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+
+  // إغلاق المودال عند الضغط خارج المحتوى
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+</script>
+
+ <script>
+  const searchInput = document.getElementById('searchInput');
+
+  searchInput.addEventListener('input', function () {
+    const keyword = searchInput.value.toLowerCase();
+    const skins = document.querySelectorAll('.skin');
+
+    skins.forEach(function (skin) {
+      const name = skin.getAttribute('data-name').toLowerCase();
+      const desc = skin.getAttribute('data-desc').toLowerCase();
+      if (name.includes(keyword) || desc.includes(keyword)) {
+        skin.style.display = 'block';
+      } else {
+        skin.style.display = 'none';
+      }
+    });
+  });
+
+</script>
+
+</body>
+</html>
+
+<footer style="
+  position: fixed; 
+  bottom: 0; 
+  width: 100%; 
+  background-color: #000814; 
+  color: #00ffff; 
+  text-align: center; 
+  padding: 10px 0; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  font-size: 16px; 
+  text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff;
+  box-shadow: 0 0 15px #00ffff inset;
+  z-index: 1000;
+">
+  حقوق ماكس - 
+  <a href="https://t.me/minecraftsVersions" target="_blank" rel="noopener" style="color: #00ffff; text-decoration: underline;">@minecraftsVersions</a><br>
+  تم صناعة الموقع بالكامل بواسطة  
+  <a href="https://t.me/T_90q" target="_blank" rel="noopener" style="color: #00ffff; text-decoration: underline;">@T_90q</a>
+</footer>
+
